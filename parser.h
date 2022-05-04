@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 #include"lexer.h"
+#include<list>
+#include<iostream>
 
 void program();
 void block();
@@ -47,6 +49,8 @@ void relationopt();
 
 struct parser{
     static int error;
+    std::list<struct Token*> tokenlist;
+    std::list<struct Token*>::iterator token_iter;
 
     void initParser(const char* s_filename);
 };

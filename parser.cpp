@@ -5,13 +5,14 @@ void parser::initParser(const char* s_filename){
     mylexer->InitSourceCode(s_filename);
     struct Token *ctoken=mylexer->GetNextToken();
     while(1){
-        printToken(ctoken);
+        tokenlist.push_back(ctoken);
         ctoken=mylexer->GetNextToken();
         if(mylexer->reach_end==1){
-            printToken(ctoken);
+            tokenlist.push_back(ctoken);
             break;          
         }
-    }    
+    }
+    for(token_iter=tokenlist.begin();token_iter!=tokenlist.end();token_iter++) printToken(*token_iter);     
 }
 
 int main(){
