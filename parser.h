@@ -11,6 +11,11 @@ struct parser{
 
     void initParser(const char* s_filename);
     int parse();
+    int match(enum TokenType a, enum TokenType b);
+    int match(enum TokenType a);
+    int go();
+    void parseError();
+    
 
     int program();
     int block();
@@ -30,23 +35,23 @@ struct parser{
     int factor();
     int mulopt();
 
-    void programhead();
-    void constexp();
-    void varexp();
-    void vardef();
-    void prodef();
-    void prohead();
-    void assign_or_call();
-    void suffix();
-    void read();
-    void idsuff();
-    void compsent();
-    void sentsuff();
-    void termsuff();
-    void term();
-    void argument();
-    void addopt();
-    void relationopt();
+    int programhead();
+    int constexp();
+    int varexp();
+    int vardef();
+    int prodef();
+    int prohead();
+    int assign_or_call();
+    int suffix();
+    int read();
+    int idsuff();
+    int compsent();
+    int sentsuff();
+    int termsuff();
+    int term();
+    int argument();
+    int addopt();
+    int relationopt();
 };
 
 #endif

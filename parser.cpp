@@ -39,6 +39,9 @@ void parser::parseError(){
 
 int parser::parse(){
     token_iter=tokenlist.begin();
+    if(program()){printf("compile success!"); return 1;}
+    printf("compile failure!");
+    return 0;
 
 }
 
@@ -267,4 +270,5 @@ int parser::relationopt(){
 int main(){
     struct parser *myparser = new struct parser;
     myparser->initParser("test.pas");
+    myparser->parse();
 }
