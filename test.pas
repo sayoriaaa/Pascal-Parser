@@ -1,6 +1,6 @@
-program li1(input,output);
+program li1;
 var
-r,l,s:real;
+r,l,s:long;
 begin
 read(r);
 s:=pi*r*r;

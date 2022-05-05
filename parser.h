@@ -14,6 +14,7 @@ struct parser{
     int match(enum TokenType a, enum TokenType b);
     int match(enum TokenType a);
     int go();
+    int back();
     void parseError();
     
 
