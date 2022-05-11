@@ -2,10 +2,25 @@
 #define PARSER_H
 #include"lexer.h"
 #include<list>
+#include<map>
 #include<iostream>
+#include<string>
+
+class Env{     
+    protected:
+        Env *prev;
+    public:
+        int m_idx;
+        std::map<std::string, int> table;
+        Env(Env *p){prev=p;m_idx=0;}
+        void put(int ad, char* name);
+        int get(char* name);
+};
 
 struct parser{
     int error=0;
+    Env *top=new Env((Env*)NULL);
+
     std::list<struct Token*> tokenlist;
     std::list<struct Token*>::iterator token_iter;
 

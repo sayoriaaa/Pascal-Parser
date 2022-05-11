@@ -1,5 +1,21 @@
 #include"parser.h"
 
+void Env::put(int ad, char* name){
+    std::string tar = std::string(name, strlen(name));
+    table[tar]=m_idx;
+    m_idx+=ad;
+}
+
+int Env::get(char* name){
+    std::string tar= std::string(name, strlen(name));
+    for(Env e=this; ; e=*(e.prev)){
+        if(e.table.find(tar)!=e.table.end()) return e.table.find(tar)->second;
+        if(e.prev==(Env*)NULL) break;
+    }
+    return -1;
+}
+
+
 void parser::initParser(const char* s_filename){
     struct Lexer *mylexer=new struct Lexer;
     mylexer->InitSourceCode(s_filename);
@@ -15,8 +31,20 @@ void parser::initParser(const char* s_filename){
     for(token_iter=tokenlist.begin();token_iter!=tokenlist.end();token_iter++) printToken(*token_iter);     
 }
 
+
 int parser::match(enum TokenType a){
-    if((*token_iter)->type==a){printf("\nmatch! inner code: %d",(*token_iter)->type); go(); return 1;} 
+    if((*token_iter)->type==a){
+        printf("\nmatch! inner code: %d",(*token_iter)->type); 
+        if(a==IDENTIFIER){
+            printf("\nmet identifier!! executing...\n");
+            if(top->get((*token_iter)->token_buffer)!=-1) printf("found in table!\n");
+            else {
+                top->put(4, (*token_iter)->token_buffer); 
+                printf("number %d loaded in table\n", top->get((*token_iter)->token_buffer));
+                }//字节为单位寻址
+        }
+        go(); 
+        return 1;} 
     return 0;
 }
 
@@ -56,9 +84,13 @@ int parser::program(){
     return 0;
 }
 int parser::block(){
+    Env *topSave=top;
+    top=new Env(topSave);
+    
     std::list<struct Token*>::iterator scope_iter=token_iter;
-    if(constexp()&&varexp()&&prodef()&&compsent()){printf("block matched!!\n"); return 1;}
+    if(constexp()&&varexp()&&prodef()&&compsent()){printf("block matched!!\n");top=topSave; return 1;}
     token_iter=scope_iter;
+    top=topSave;
     printf("block unmatched\n");
     return 0;
 }
@@ -179,14 +211,14 @@ int parser::programhead(){
 }
 int parser::constexp(){
     std::list<struct Token*>::iterator scope_iter=token_iter;
-    if(match(K_CONST)&&constdef()&&constsuff()) return 1;
+    if(match(K_CONST)&&constdef()&&constsuff()) {return 1;}
     token_iter=scope_iter;
     return 1;
 }
 int parser::varexp(){
     printf("\nthis is varexp\ncurrent token is %d\n", (*token_iter)->type);
     std::list<struct Token*>::iterator scope_iter=token_iter;
-    if(match(K_VAR)&&vardef()&&varsuff()) return 1;
+    if(match(K_VAR)&&vardef()&&varsuff()) {return 1;}
     token_iter=scope_iter;
     return 1;
 }
