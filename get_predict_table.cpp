@@ -82,7 +82,7 @@ using namespace std;
 #define FSHARP 256//to mark FOLLOW SET
 
 
-void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FIRST_SET){
+void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FIRST_SET, vector<int> &conduct_epsilon){
     if(pro>100) pro-=128;//fix bug
 
     if(FIRST_SET[pro].size()>0) return;
@@ -103,7 +103,7 @@ void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<in
                     break;
                 }
                 int seek_pro=PRODUCTION[pro][i][j]-128;// as above
-                get_first(seek_pro, PRODUCTION, FIRST_SET);
+                get_first(seek_pro, PRODUCTION, FIRST_SET, conduct_epsilon);
                 for(auto x=FIRST_SET[seek_pro].begin(); x!=FIRST_SET[seek_pro].end(); x++){//copy FIRST(seek_pro)-epsilon to FIRST(pro)
                     if((*x)==epsilon) continue;
                     FIRST_SET[pro].insert(*x);
@@ -119,6 +119,7 @@ void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<in
 
     if(FIRST_SET[pro].size()==0) FIRST_SET[pro].insert(-1);//if error
     //cout<<pro+128<<" calculated!"<<endl;
+    conduct_epsilon[pro]=exist_epsilon;
     return;
 }
 
@@ -173,6 +174,52 @@ void get_follow(vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FI
     return;
 }
 
+void get_select(vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FIRST_SET, vector<set<int> > &FOLLOW_SET, vector<set<int> > &SELECT_SET, vector<int> &conduct_epsilon){
+    
+
+    for(int i=0; i<FIRST_SET.size(); i++){
+
+        int exist_epsilon=0;
+        if(PRODUCTION[i].back()[0]==0) exist_epsilon=1;
+
+        if(conduct_epsilon[i]){
+            for(int j=0; j<PRODUCTION[i].size()-exist_epsilon; j++){
+                for(int k=0; k<PRODUCTION[i][j].size(); k++){
+                    int exp=PRODUCTION[i][j][k];
+                    if(exp<100) SELECT_SET[i].insert(exp);
+                    else{
+                        exp-=128;
+                        for(auto x=FIRST_SET[exp].begin(); x!=FIRST_SET[exp].end(); x++){
+                            if((*x)==epsilon) continue;
+                            SELECT_SET[i].insert(*x);}
+                    }
+                }
+            }
+            for(auto x=FOLLOW_SET[i].begin(); x!=FOLLOW_SET[i].end(); x++){
+                SELECT_SET[i].insert(*x);
+            } 
+
+        }
+        else{
+            cout<<"hello"<<endl;
+            for(int j=0; j<PRODUCTION[i].size()-exist_epsilon; j++){
+                for(int k=0; k<PRODUCTION[i][j].size(); k++){
+                    int exp=PRODUCTION[i][j][k];
+                    if(exp<100) SELECT_SET[i].insert(exp);
+                    else{
+                        exp-=128;
+                        for(auto x=FIRST_SET[exp].begin(); x!=FIRST_SET[exp].end(); x++){
+                            SELECT_SET[i].insert(*x);}
+                    }
+                }
+            }
+            cout<<"hello1"<<endl;
+
+        }
+    }
+
+}
+
 
 
 int main(int argc, char** argv){
@@ -183,6 +230,9 @@ int main(int argc, char** argv){
 
     vector<set<int> > FIRST_SET;
     vector<set<int> > FOLLOW_SET;
+    vector<set<int> > SELECT_SET;
+
+    vector<int> conduct_epsilon;
 
     /*for program */
     EACH_SINGLE_PRODUCTION.push_back(programhead);
@@ -708,11 +758,13 @@ int main(int argc, char** argv){
         } 
     }
     cout<<endl;
+
+    conduct_epsilon.resize(PRODUCTION.size());
 /*----------------------------------------------*/
     FIRST_SET.resize(PRODUCTION.size());
     cout<<"FIRST SET:"<<endl;
     for(int i=0; i<PRODUCTION.size(); i++){
-        get_first(i, PRODUCTION, FIRST_SET);
+        get_first(i, PRODUCTION, FIRST_SET, conduct_epsilon);
     }
 
     for(int i=0; i<FIRST_SET.size(); i++){//print FIRST set
@@ -742,6 +794,25 @@ int main(int argc, char** argv){
         }
         cout<<endl;
     }
+/*----------------------------------------------*/
+    cout<<"if not determinant can conduct epsilon:"<<endl;
+    for(int i=0; i<FOLLOW_SET.size(); i++){
+        cout<<128+i<<':'<<conduct_epsilon[i]<<endl;
+    }
+/*----------------------------------------------*/
+    cout<<"SELECT SET:"<<endl;
+    SELECT_SET.resize(PRODUCTION.size());
+    get_select(PRODUCTION, FIRST_SET, FOLLOW_SET, SELECT_SET, conduct_epsilon);
+
+    for(int i=0; i<SELECT_SET.size(); i++){//print FOLLOW set
+        cout<<i+128<<':';
+        for(auto j=SELECT_SET[i].begin(); j!=SELECT_SET[i].end(); j++){
+            cout<<*j<<' ';
+        }
+        cout<<endl;
+    }
+
+
 
 
     return 0;
