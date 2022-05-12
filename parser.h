@@ -18,7 +18,6 @@ class Env{
 };
 
 struct parser{
-    int error=0;
     Env *top=new Env((Env*)NULL);
 
     std::list<struct Token*> tokenlist;
@@ -69,5 +68,49 @@ struct parser{
     int addopt();
     int relationopt();
 };
+/*
+enum FunType{
+    program=128,
+    programhead,
+    block,
+    constexp,
+    constdef,
+    varexp,
+    constsuff,
+    vardef,
+    varsuff,
+    prodef,
+    type,
+    prohead,
+    prosuff,
+    assign_or_call,
+    sentence,
+    suffix,
+    ifsent,
+    read,
+    whilesent,
+    idsuff,
+    write,
+    compsent,
+    exprsuff,
+    sentsuff,
+    condition,
+    termsuff,
+    express,
+    term,
+    factorsuff,
+    argument,
+    factor,
+    addopt,
+    mulopt,
+    relationopt
+};
+
+struct predict_parse{
+    int predict_table[34][7]={
+        {1, 34, 28, }
+    }
+}
+*/
 
 #endif
