@@ -79,6 +79,8 @@ using namespace std;
 #define IDENTIFIER 34
 #define SHARP 35
 
+#define FSHARP 256//to mark FOLLOW SET
+
 
 void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FIRST_SET){
     if(pro>100) pro-=128;//fix bug
@@ -120,6 +122,57 @@ void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<in
     return;
 }
 
+void get_follow(vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FIRST_SET, vector<set<int> > &FOLLOW_SET){
+    int refresh=1;
+    int exist_epsilon=0;
+    
+    while(refresh){
+        refresh=0;
+        for(int i=0; i<FOLLOW_SET.size(); i++){
+            if(PRODUCTION[i].back()[0]==0) exist_epsilon=1;
+            for(int j=0; j<PRODUCTION[i].size()-exist_epsilon; j++){
+                for(int k=0; k<PRODUCTION[i][j].size(); k++){
+                    int curr=PRODUCTION[i][j][k];
+                    if(curr>100){//met not det
+                        int tmp=FOLLOW_SET[curr-128].size();
+                        if(k<PRODUCTION[i][j].size()-1){//&&not last one
+                            int curr_next=PRODUCTION[i][j][k+1];//get next one
+                            if(curr_next<100){//next one is det
+                                FOLLOW_SET[curr-128].insert(curr_next);
+                            }
+                            else{//next one also not det
+                                int have_epsilon=0;
+                                for(auto x=FIRST_SET[curr_next-128].begin(); x!=FIRST_SET[curr_next-128].end(); x++){
+                                    if((*x)==epsilon){//epsilon detected
+                                        have_epsilon=0;
+                                        continue;
+                                    }
+                                    FOLLOW_SET[curr-128].insert(*x);
+                                }//copy FIRST(NEXT) TO FOLLOW(CURRENT) except epsilon
+                                if(have_epsilon){
+                                    for(auto x=FOLLOW_SET[curr_next-128].begin(); x!=FOLLOW_SET[curr_next-128].end(); x++){
+                                        FOLLOW_SET[curr-128].insert(*x);
+                                    }//copy FOLLOW(NEXT) TO FOLLOW(CURRENT) except epsilon
+                                }         
+                            }
+
+                        }
+                        else{//is the last one
+                            for(auto x=FOLLOW_SET[i].begin(); x!=FOLLOW_SET[i].end(); x++){
+                                FOLLOW_SET[curr-128].insert(*x);
+                            }             
+                        }
+                        if(tmp!=FOLLOW_SET[curr-128].size()) refresh=1;
+                    }
+                }
+            }
+
+        }
+    }
+    
+    return;
+}
+
 
 
 int main(int argc, char** argv){
@@ -129,6 +182,7 @@ int main(int argc, char** argv){
     vector<int> EACH_SINGLE_PRODUCTION;
 
     vector<set<int> > FIRST_SET;
+    vector<set<int> > FOLLOW_SET;
 
     /*for program */
     EACH_SINGLE_PRODUCTION.push_back(programhead);
@@ -654,7 +708,7 @@ int main(int argc, char** argv){
         } 
     }
     cout<<endl;
-
+/*----------------------------------------------*/
     FIRST_SET.resize(PRODUCTION.size());
     cout<<"FIRST SET:"<<endl;
     for(int i=0; i<PRODUCTION.size(); i++){
@@ -668,5 +722,27 @@ int main(int argc, char** argv){
         }
         cout<<endl;
     }
+/*----------------------------------------------*/
+    FOLLOW_SET.resize(PRODUCTION.size());
+    for(int i=0; i<PRODUCTION.size(); i++){
+        FOLLOW_SET[i].insert(FSHARP);
+    }
+
+    cout<<"FOLLOW SET:"<<endl;
+    for(int i=0; i<PRODUCTION.size(); i++){
+        FOLLOW_SET[i].insert(FSHARP);
+    }
+
+    get_follow(PRODUCTION, FIRST_SET, FOLLOW_SET);
+
+    for(int i=0; i<FOLLOW_SET.size(); i++){//print FOLLOW set
+        cout<<i+128<<':';
+        for(auto j=FOLLOW_SET[i].begin(); j!=FOLLOW_SET[i].end(); j++){
+            cout<<*j<<' ';
+        }
+        cout<<endl;
+    }
+
+
     return 0;
 }
