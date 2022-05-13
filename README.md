@@ -64,37 +64,37 @@
 
 消除左递归的语法：
 
-- <program>→<programhead><block>DOT
-- <programhead>→PROGRAM标识符SEMICOLON
-- <block>→<constexp><varexp><prodef> <compsent>
-- <constexp>→CONST<constdef><constsuff> |ε
-- <constdef>→标识符EQUAL无符号整数
-- <constsuff>→COMMA<constdef><constsuff> |ε
-- <varexp>→VAR<vardef><varsuff> |ε
-- <vardef>→标识符<idsuff>COLON<type>SEMICOLON
-- <idsuff>→COMMA标识符<idsuff> |ε
-- <varsuff>→<vardef><varsuff> |ε
-- <type>→INTEGER | LONG
-- <prodef>→<prohead><block>SEMICOLON<prosuff>|ε
-- <prohead>→PROCEDURE标识符<argument>SEMICOLON
-- <argument>→(标识符COLON<type>)|ε
-- <prosuff>→<prohead><block>SEMICOLON<prosuff>|ε
-- <sentence>→<assign_or_call>|<ifsent>|<whilesent>|<read>|<write>|<compsent>|ε
-- <assign_or_call>→标识符<suffix>
-- <suffix>→ASSIGN<express>|(<express>)|ε
-- <ifsent>→IF<condition>THEN<sentence>
-- <whilesent>→WHILE<condition>DO <sentence>
-- <read>→READ（标识符<idsuff>）
-- <write>→WRITE（<express><exprsuff>）
-- <exprsuff>→COMMA<express><exprsuff>|ε
-- <compsent>→BEGIN<sentence><sentsuff>END
-- <sentsuff>→SEMICOLON<sentence><sentsuff>|ε
-- <condition>→<express><relationopt><express>|ODD<express>
-- <express>→ADD<term><termsuff>|MIN<term><termsuff>|<term><termsuff>
-- <termsuff>→<addopt><term><termsuff>|ε
-- <term>→<factor><factorsuff>
-- <factorsuff>→<mulopt><factor><factorsuff>|ε
-- <factor>→标识符|无符号整数|（<express>）
-- <addopt>→+|-
-- <mulopt>→*|/
-- <relationopt>→ =|<>|<|<=|>|>=
+- \<program\>→\<programhead\>\<block\>DOT
+- \<programhead\>→PROGRAM标识符SEMICOLON
+- \<block\>→\<constexp>\<varexp>\<prodef> \<compsent>
+- \<constexp>→CONST\<constdef>\<constsuff> |ε
+- \<constdef>→标识符EQUAL无符号整数
+- \<constsuff>→COMMA\<constdef>\<constsuff> |ε
+- \<varexp>→VAR\<vardef>\<varsuff> |ε
+- \<vardef>→标识符\<idsuff>COLON<type>SEMICOLON
+- \<idsuff>→COMMA标识符\<idsuff> |ε
+- \<varsuff>→\<vardef>\<varsuff> |ε
+- \<type>→INTEGER | LONG
+- \<prodef>→\<prohead>\<block>SEMICOLON\<prosuff>|ε
+- \<prohead>→PROCEDURE标识符\<argument>SEMICOLON
+- \<argument>→(标识符COLON\<type>)|ε
+- \<prosuff>→\<prohead>\<block>SEMICOLON\<prosuff>|ε
+- \<sentence>→<assign_or_call>|\<ifsent>|\<whilesent>|\<read>|\<write>|\<compsent>|ε
+- <assign_or_call>→标识符\<suffix>
+- \<suffix>→ASSIGN\<express>|(\<express>)|ε
+- \<ifsent>→IF\<condition>THEN\<sentence>
+- \<whilesent>→WHILE\<condition>DO \<sentence>
+- \<read>→READ（标识符\<idsuff>）
+- \<write>→WRITE（\<express>\<exprsuff>）
+- \<exprsuff>→COMMA\<express>\<exprsuff>|ε
+- \<compsent>→BEGIN\<sentence>\<sentsuff>END
+- \<sentsuff>→SEMICOLON\<sentence>\<sentsuff>|ε
+- \<condition>→\<express>\<relationopt>\<express>|ODD\<express>
+- \<express>→ADD\<term>\<termsuff>|MIN\<term>\<termsuff>|\<term>\<termsuff>
+- \<termsuff>→\<addopt>\<term>\<termsuff>|ε
+- \<term>→\<factor>\<factorsuff>
+- \<factorsuff>→\<mulopt>\<factor>\<factorsuff>|ε
+- \<factor>→标识符|无符号整数|（\<express>）
+- \<addopt>→+|-
+- \<mulopt>→*|/
+- \<relationopt>→ =|<>|<|<=|>|>=
