@@ -5,6 +5,7 @@
 #include<map>
 #include<iostream>
 #include<string>
+#include<stack>
 
 class Env{     
     protected:
@@ -22,6 +23,8 @@ struct parser{
 
     std::list<struct Token*> tokenlist;
     std::list<struct Token*>::iterator token_iter;
+    std::stack<int> TABLE_STACK;
+    int error; //for predict_parser
 
     void initParser(const char* s_filename);
     int parse();
@@ -30,6 +33,9 @@ struct parser{
     int go();
     int back();
     void parseError();
+
+    int predict_parser();
+    void maintain_predict_stack(int nondet, int token);
     
 
     int program();
@@ -105,12 +111,6 @@ enum FunType{
     mulopt,
     relationopt
 };
-
-struct predict_parse{
-    int predict_table[34][7]={
-        {1, 34, 28, }
-    }
-}
 */
 
 #endif
