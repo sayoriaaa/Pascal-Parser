@@ -47,8 +47,13 @@ int parser::predict_parser(){
     while(!TABLE_STACK.empty()&&!error){
         cout<<"current top:"<<TABLE_STACK.top()<<" current token:"<<(*token_iter)->type<<endl;
         maintain_predict_stack(TABLE_STACK.top(), (int)(*token_iter)->type);
+
+        if(TABLE_STACK.top()==256&&token_iter==tokenlist.end()){
+            cout<<"current top:"<<TABLE_STACK.top()<<" current token:"<<256<<endl;
+            cout<<"compile success"<<endl;
+            break;
+        }
     }
-    if(!error) cout<<"compile success"<<endl;
     return 0;
 }
 
@@ -143,7 +148,7 @@ void parser::maintain_predict_stack(int nondet, int token){
             TABLE_STACK.push(136);//right to left
             TABLE_STACK.push(135);
         }
-        else if(token==2||token==6||token==28||token==256){
+        else if(token==2||token==6||token==28||token==256||token==13){
             TABLE_STACK.pop();
         }
         else{cout<<"parser error!"<<endl; error=1;}
@@ -227,7 +232,7 @@ void parser::maintain_predict_stack(int nondet, int token){
             TABLE_STACK.pop();
             TABLE_STACK.push(149);
         }
-        else if(token==28||token==256){
+        else if(token==28||token==256||token==14){
             TABLE_STACK.pop();
         }
         else{cout<<"parser error!"<<endl; error=1;}
@@ -287,6 +292,9 @@ void parser::maintain_predict_stack(int nondet, int token){
             TABLE_STACK.push(34);//right to left
             TABLE_STACK.push(26);
         }
+        else if(token==29||32){
+            TABLE_STACK.pop();
+        }
         else if(token==256){
             TABLE_STACK.pop();
         }
@@ -304,7 +312,7 @@ void parser::maintain_predict_stack(int nondet, int token){
         else{cout<<"parser error!"<<endl; error=1;}
     }
     else if(nondet==149){
-        if(token==12){
+        if(token==13){
             TABLE_STACK.pop();
             TABLE_STACK.push(14);
             TABLE_STACK.push(151);//right to left
@@ -332,7 +340,7 @@ void parser::maintain_predict_stack(int nondet, int token){
             TABLE_STACK.push(142);//right to left
             TABLE_STACK.push(28);
         }
-        else if(token==256){
+        else if(token==256||token==14){
             TABLE_STACK.pop();
         }
         else{cout<<"parser error!"<<endl; error=1;}
@@ -358,7 +366,7 @@ void parser::maintain_predict_stack(int nondet, int token){
             TABLE_STACK.push(155);//right to left
             TABLE_STACK.push(159);
         }
-        else if(token==256||token==32||token==20||token==26){
+        else if(token==256||token==32||token==20||token==26||token==28){
             TABLE_STACK.pop();
         }
         else{cout<<"parser error!"<<endl; error=1;}
@@ -376,6 +384,11 @@ void parser::maintain_predict_stack(int nondet, int token){
             TABLE_STACK.push(155);//right to left
             TABLE_STACK.push(17);
         }
+        else if(token==33){
+            TABLE_STACK.pop();
+            TABLE_STACK.push(153);
+            TABLE_STACK.push(155);//right to left
+        }
         else if(token==18||token==34){
             TABLE_STACK.pop();
             TABLE_STACK.push(153);
@@ -384,7 +397,7 @@ void parser::maintain_predict_stack(int nondet, int token){
         else{cout<<"parser error!"<<endl; error=1;}
     }
     else if(nondet==155){
-        if(token==34){
+        if(token==34||33){
             TABLE_STACK.pop();
             TABLE_STACK.push(156);
             TABLE_STACK.push(158);
@@ -398,7 +411,7 @@ void parser::maintain_predict_stack(int nondet, int token){
             TABLE_STACK.push(158);//right to left
             TABLE_STACK.push(160);
         }
-        else if(token==256){
+        else if(token==256||token==8||token==10||token==14||token==16||token==18||token==20||token==26||token==28||token==32||token==34){
             TABLE_STACK.pop();
         }
         else{cout<<"parser error!"<<endl; error=1;}

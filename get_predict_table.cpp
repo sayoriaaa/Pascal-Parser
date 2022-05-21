@@ -92,28 +92,22 @@ void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<in
     //cout<<pro+128<<" "<<exist_epsilon<<endl;
 
     for(int i=0; i<PRODUCTION[pro].size()-exist_epsilon; i++){//choose production
-        if(PRODUCTION[pro][i][0]<100){
-            FIRST_SET[pro].insert(PRODUCTION[pro][i][0]);// first one is det
-            break;
-        }
-        else{
-            for(int j=0; j<PRODUCTION[pro][i].size(); j++){
-                if(PRODUCTION[pro][i][j]<100){
-                    FIRST_SET[pro].insert(PRODUCTION[pro][i][j]);//met det in middle; break
-                    break;
-                }
-                int seek_pro=PRODUCTION[pro][i][j]-128;// as above
-                get_first(seek_pro, PRODUCTION, FIRST_SET);
-                for(auto x=FIRST_SET[seek_pro].begin(); x!=FIRST_SET[seek_pro].end(); x++){//copy FIRST(seek_pro)-epsilon to FIRST(pro)
-                    if((*x)==epsilon) continue;
-                    FIRST_SET[pro].insert(*x);
-                    //cout<<"copy:"<<*x<<endl;
-                }
-                if(FIRST_SET[seek_pro].find(epsilon)==FIRST_SET[seek_pro].end()) epsilon_num++;
-                else break;
+        for(int j=0; j<PRODUCTION[pro][i].size(); j++){
+            if(PRODUCTION[pro][i][j]<100){
+                FIRST_SET[pro].insert(PRODUCTION[pro][i][j]);//met det in middle; break
+                break;
             }
-            if(epsilon_num==PRODUCTION[pro][i].size()) exist_epsilon=1;//produce epsilon indirectly
+            int seek_pro=PRODUCTION[pro][i][j]-128;// as above
+            get_first(seek_pro, PRODUCTION, FIRST_SET);
+            for(auto x=FIRST_SET[seek_pro].begin(); x!=FIRST_SET[seek_pro].end(); x++){//copy FIRST(seek_pro)-epsilon to FIRST(pro)
+                if((*x)==epsilon) continue;
+                FIRST_SET[pro].insert(*x);
+                //cout<<"copy:"<<*x<<endl;
+            }
+            if(FIRST_SET[seek_pro].find(epsilon)==FIRST_SET[seek_pro].end()) epsilon_num++;
+            else break;
         }
+        if(epsilon_num==PRODUCTION[pro][i].size()) exist_epsilon=1;//produce epsilon indirectly
     }
     if(exist_epsilon) FIRST_SET[pro].insert(epsilon);
 
@@ -124,27 +118,31 @@ void get_first(int pro, vector<vector<vector<int> > > &PRODUCTION, vector<set<in
 
 void get_follow(vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FIRST_SET, vector<set<int> > &FOLLOW_SET){
     int refresh=1;
-    int exist_epsilon=0;
+    
     
     while(refresh){
         refresh=0;
-        for(int i=0; i<FOLLOW_SET.size(); i++){
+        for(int i=0; i<PRODUCTION.size(); i++){
+            //printf("in %d-th production\n", i+128);
+            int exist_epsilon=0;
             if(PRODUCTION[i].back()[0]==0) exist_epsilon=1;
             for(int j=0; j<PRODUCTION[i].size()-exist_epsilon; j++){
                 for(int k=0; k<PRODUCTION[i][j].size(); k++){
                     int curr=PRODUCTION[i][j][k];
+                    //printf("current visit: %d\n", curr);
                     if(curr>100){//met not det
                         int tmp=FOLLOW_SET[curr-128].size();
                         if(k<PRODUCTION[i][j].size()-1){//&&not last one
                             int curr_next=PRODUCTION[i][j][k+1];//get next one
                             if(curr_next<100){//next one is det
                                 FOLLOW_SET[curr-128].insert(curr_next);
+                                //printf("%d %d:this next append\n", curr, curr_next);
                             }
                             else{//next one also not det
                                 int have_epsilon=0;
                                 for(auto x=FIRST_SET[curr_next-128].begin(); x!=FIRST_SET[curr_next-128].end(); x++){
                                     if((*x)==epsilon){//epsilon detected
-                                        have_epsilon=0;
+                                        have_epsilon=1;
                                         continue;
                                     }
                                     FOLLOW_SET[curr-128].insert(*x);
@@ -162,7 +160,7 @@ void get_follow(vector<vector<vector<int> > > &PRODUCTION, vector<set<int> > &FI
                                 FOLLOW_SET[curr-128].insert(*x);
                             }             
                         }
-                        if(tmp!=FOLLOW_SET[curr-128].size()) refresh=1;
+                        if(tmp!=FOLLOW_SET[curr-128].size()) refresh=1||refresh;
                     }
                 }
             }
