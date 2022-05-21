@@ -1,4 +1,5 @@
 #include"parser.h"
+#include<string.h>
 #include<stack>
 
 using std::cout;
@@ -760,9 +761,13 @@ int parser::relationopt(){
 
 
 
-int main(){
+int main(int argc, char** argv){
+
     struct parser *myparser = new struct parser;
     myparser->initParser("test.pas");
-    //myparser->parse();
-    myparser->predict_parser();
+    if(argc>1){
+        if(strcmp(argv[1], "-r")==0) myparser->parse();
+        if(strcmp(argv[1], "-p")==0) myparser->predict_parser();
+    }
+    else myparser->predict_parser();
 }
